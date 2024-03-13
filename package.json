@@ -1,0 +1,28 @@
+{
+  "name": "montonio-api-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint .",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.26",
+    "axios": "^1.6.7",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.2",
+    "wiremock": "^3.4.2"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
+  }
+}
