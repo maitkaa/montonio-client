@@ -1,6 +1,7 @@
 {
     "ignorePatterns": [
-        "tsup.config.ts"
+        "tsup.config.ts",
+        "jest.config.js"
     ],
     "parserOptions": {
         "project": "./tsconfig.json"
