@@ -17,6 +17,16 @@ export enum Locale {
     Ru = "ru"
 }
 
+export enum PaymentStatus {
+    PENDING = "PENDING",
+    PAID = "PAID",
+    VOIDED = "VOIDED",
+    PARTIALLY_REFUNDED = "PARTIALLY_REFUNDED",
+    REFUNDED = "REFUNDED",
+    ABANDONED = "ABANDONED",
+    AUTHORIZED = "AUTHORIZED",
+}
+
 export interface Address {
     firstName?: string;
     lastName?: string;
@@ -109,9 +119,9 @@ interface PaymentIntent {
     createdAt: string;
 }
 
-export interface PaymentUrlResponse {
+export interface OrderResponse {
     uuid: string;
-    paymentStatus: string;
+    paymentStatus: PaymentStatus;
     locale: string;
     merchantReference: string;
     merchantReferenceDisplay: string;
@@ -122,7 +132,7 @@ export interface PaymentUrlResponse {
     paymentMethodType: string;
     storeUuid: string;
     paymentIntents: PaymentIntent[];
-    refunds: [];
+    refunds: RefundResponse[];
     availableForRefund: number;
     isRefundableType: boolean;
     lineItems: LineItem[];
@@ -133,4 +143,13 @@ export interface PaymentUrlResponse {
     storeName: string;
     businessName: string;
     paymentUrl: string;
+}
+
+export interface RefundResponse {
+    uuid: string;
+    amount: number;
+    status: string;
+    currency: string;
+    createdAt: string;
+    type: string;
 }
