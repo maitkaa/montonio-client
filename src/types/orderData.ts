@@ -1,7 +1,7 @@
 export enum PaymentMethod {
     PaymentInitiation = "paymentInitiation",
     CardPayments = "cardPayments",
-    Blik = "blik", //Supported currencies: PLN
+    Blik = "blik",
     HirePurchase = "hirePurchase",
     Bnpl = "bnpl"
 }
@@ -32,6 +32,11 @@ export enum CardPaymentMethod {
     CARD = "card",
 }
 
+export enum Currency {
+    EUR = "EUR",
+    PLN = "PLN",
+}
+
 export interface Address {
     firstName?: string;
     lastName?: string;
@@ -57,10 +62,11 @@ export interface LineItem {
 }
 
 export interface PaymentInitiationOptions {
-    preferredProvider: string;
-    preferredCountry: string;
-    preferredLocale: string;
-    paymentDescription: string;
+    preferredProvider?: string;
+    preferredCountry?: string;
+    preferredLocale?: Locale;
+    paymentDescription?: string;
+    paymentReference?: string; //Structured payment reference number. This is a standardized reference number used for accounting purposes and will be validated by banks.
 }
 
 export interface CardPaymentsOptions {
@@ -91,7 +97,7 @@ export interface Payment {
     methodOptions: PaymentOptions;
     methodDisplay?: string;
     locale?: Locale;
-    currency: string;
+    currency: Currency;
     amount: number;
 }
 
@@ -100,41 +106,41 @@ export interface OrderData {
     returnUrl: string;
     notificationUrl: string;
     grandTotal: number;
-    currency: string;
+    currency: Currency;
     payment: Payment;
-    billingAddress: Address;
-    shippingAddress: Address;
-    lineItems: LineItem[];
-    locale: Locale;
+    billingAddress?: Address;
+    shippingAddress?: Address;
+    lineItems?: LineItem[];
+    locale?: Locale;
 }
 
 export interface PaymentIntent {
     uuid: string;
-    paymentMethodType: string;
+    paymentMethodType: PaymentMethod;
     paymentMethodMetadata: {
         preferredCountry: string;
         preferredProvider: string;
         paymentDescription: string;
     };
     amount: string;
-    currency: string;
+    currency: Currency;
     status: PaymentStatus;
     serviceFee: string;
-    serviceFeeCurrency: string;
+    serviceFeeCurrency: Currency;
     createdAt: string;
 }
 
 export interface OrderResponse {
     uuid: string;
     paymentStatus: PaymentStatus;
-    locale: string;
+    locale: Locale;
     merchantReference: string;
     merchantReferenceDisplay: string;
     merchantReturnUrl: string;
     merchantNotificationUrl: string;
     grandTotal: string;
-    currency: string;
-    paymentMethodType: string;
+    currency: Currency;
+    paymentMethodType: PaymentMethod;
     storeUuid: string;
     paymentIntents: PaymentIntent[];
     refunds: RefundResponse[];
@@ -154,7 +160,7 @@ export interface RefundResponse {
     uuid: string;
     amount: number;
     status: string;
-    currency: string;
+    currency: Currency;
     createdAt: string;
     type: string;
 }
@@ -170,7 +176,7 @@ export interface PaymentDetails {
     paymentProviderName: string;
     senderIban: string | null;
     senderName: string | null;
-    currency: string;
+    currency: Currency;
     merchant_reference: string;
     merchant_reference_display: string;
     payment_status: string;

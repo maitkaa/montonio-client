@@ -6,6 +6,7 @@ import qs from "qs";
 import { PaymentMethods, PaymentMethodsResponse } from "../types/PaymentMethod";
 import { ApiError, ERRORS, MontonioErrorResponse, NetworkError } from "../errors";
 import {
+    Currency,
     OrderData,
     OrderResponse,
     PaymentDetails,
@@ -138,6 +139,13 @@ export class MontonioClient {
                 }
             }
 
+            // Check if payment method is Blik and currency is PLN
+            if (orderData.payment.method === PaymentMethod.Blik) {
+                if (orderData.payment.currency !== Currency.PLN) {
+                    throw new Error(ERRORS.INVALID_CURRENCY);
+                }
+            }
+
             // Check if payment method is Bnpl
             if (orderData.payment.method === PaymentMethod.Bnpl && "period" in orderData.payment.methodOptions) {
                 const period = orderData.payment.methodOptions.period;
@@ -170,7 +178,10 @@ export class MontonioClient {
     // eslint-disable-next-line @typescript-eslint/require-await
     async validateOrder(orderToken: string): Promise<PaymentDetails> {
         try {
-            return jwt.verify(orderToken, this.secretKey) as PaymentDetails;
+            const decoded = jwt.verify(orderToken, this.secretKey) as PaymentDetails;
+            if (!decoded) throw new Error(ERRORS.ORDER_TOKEN_DECODE_FAILED);
+            if (decoded.accessKey !== this.accessKey) throw new Error(ERRORS.ORDER_TOKEN_DECODE_WRONG_ACCESS_KEY);
+            return decoded;
         } catch (error) {
             this.handleAxiosError(error);
             throw error;

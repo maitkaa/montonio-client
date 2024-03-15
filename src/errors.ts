@@ -24,6 +24,7 @@ export const ERRORS = {
     API_REQUEST_FAILED: "API request failed: ",
     API_MONTONIO_RESPONSE: "Montonio response: ",
     ORDER_TOKEN_DECODE_FAILED: "Failed to decode order token",
+    ORDER_TOKEN_DECODE_WRONG_ACCESS_KEY: "Order token access key does not match the access key provided in the options",
     INVALID_AMOUNT_FORMAT: "Invalid amount. It should be a number with up to 2 decimal places.",
     MISSING_ORDER_UUID: "Order UUID is required",
     MISSING_STORE_UUID: "Store UUID is required",
@@ -34,4 +35,5 @@ export const ERRORS = {
     INVALID_HIRE_PURCHASE_AMOUNT: "Invalid amount for HirePurchase. Amount must be between 100€ and 10000€.",
     INVALID_BNPL_AMOUNT_PERIOD_1: "Invalid amount for Bnpl period 1. Amount must be between 30€ and 800€.",
     INVALID_BNPL_AMOUNT_PERIOD_2_3: "Invalid amount for Bnpl period 2 or 3. Amount must be between 75€ and 2500€.",
+    INVALID_CURRENCY: "Invalid currency. The only supported currency is PLN.",
 };
