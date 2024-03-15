@@ -1,7 +1,7 @@
 export enum PaymentMethod {
     PaymentInitiation = "paymentInitiation",
     CardPayments = "cardPayments",
-    Blik = "blik",
+    Blik = "blik", //Supported currencies: PLN
     HirePurchase = "hirePurchase",
     Bnpl = "bnpl"
 }
@@ -25,6 +25,11 @@ export enum PaymentStatus {
     REFUNDED = "REFUNDED",
     ABANDONED = "ABANDONED",
     AUTHORIZED = "AUTHORIZED",
+}
+
+export enum CardPaymentMethod {
+    WALLET = "wallet",
+    CARD = "card",
 }
 
 export interface Address {
@@ -59,19 +64,19 @@ export interface PaymentInitiationOptions {
 }
 
 export interface CardPaymentsOptions {
-    preferredMethod: string;
-    preferredLocale: string;
+    preferredMethod: CardPaymentMethod;
+    preferredLocale: Locale;
 }
 
 export interface BlikOptions {
-    preferredLocale: string;
+    preferredLocale: Locale;
 }
 
 export interface HirePurchaseOptions {
 }
 
 export interface BnplOptions {
-    period: number;
+    period: number; // can be either 1, 2, or 3, depending on the split period.
 }
 
 export type PaymentOptions =
@@ -103,7 +108,7 @@ export interface OrderData {
     locale: Locale;
 }
 
-interface PaymentIntent {
+export interface PaymentIntent {
     uuid: string;
     paymentMethodType: string;
     paymentMethodMetadata: {

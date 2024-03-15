@@ -5,7 +5,14 @@ import qs from "qs";
 
 import { PaymentMethods, PaymentMethodsResponse } from "../types/PaymentMethod";
 import { ApiError, ERRORS, MontonioErrorResponse, NetworkError } from "../errors";
-import { OrderData, OrderResponse, PaymentDetails, PaymentStatus, RefundResponse } from "../types/orderData";
+import {
+    OrderData,
+    OrderResponse,
+    PaymentDetails,
+    PaymentMethod,
+    PaymentStatus,
+    RefundResponse
+} from "../types/orderData";
 import {
     Payout,
     PayoutExportResponse,
@@ -124,6 +131,24 @@ export class MontonioClient {
      */
     async createOrder(orderData: OrderData): Promise<string> {
         try {
+            // Check if payment method is HirePurchase
+            if (orderData.payment.method === PaymentMethod.HirePurchase) {
+                if (orderData.payment.amount < 100 || orderData.payment.amount > 10000) {
+                    throw new Error(ERRORS.INVALID_HIRE_PURCHASE_AMOUNT);
+                }
+            }
+
+            // Check if payment method is Bnpl
+            if (orderData.payment.method === PaymentMethod.Bnpl && "period" in orderData.payment.methodOptions) {
+                const period = orderData.payment.methodOptions.period;
+                const amount = orderData.payment.amount;
+                if (period === 1 && (amount < 30 || amount > 800)) {
+                    throw new Error(ERRORS.INVALID_BNPL_AMOUNT_PERIOD_1);
+                } else if ((period === 2 || period === 3) && (amount < 75 || amount > 2500)) {
+                    throw new Error(ERRORS.INVALID_BNPL_AMOUNT_PERIOD_2_3);
+                }
+            }
+
             const token = jwt.sign({ accessKey: this.accessKey, ...orderData }, this.secretKey, {
                 algorithm: "HS256",
                 expiresIn: "10m"
@@ -136,7 +161,6 @@ export class MontonioClient {
             throw error;
         }
     }
-
 
     /**
      * Validate order with order token

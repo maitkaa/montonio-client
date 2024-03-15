@@ -27,10 +27,11 @@ export const ERRORS = {
     INVALID_AMOUNT_FORMAT: "Invalid amount. It should be a number with up to 2 decimal places.",
     MISSING_ORDER_UUID: "Order UUID is required",
     MISSING_STORE_UUID: "Store UUID is required",
-    MISSING_LIMIT: "Limit is required",
     LIMIT_OVER_MAX: "Limit is over the maximum allowed value of 150",
-    MISSING_OFFSET: "Offset is required",
     MISSING_PAYOUT_UUID: "Payout UUID is required",
     MISSING_PAYOUT_TYPE: "Payout type is required",
     NETWORK_ERROR: "Network error",
+    INVALID_HIRE_PURCHASE_AMOUNT: "Invalid amount for HirePurchase. Amount must be between 100€ and 10000€.",
+    INVALID_BNPL_AMOUNT_PERIOD_1: "Invalid amount for Bnpl period 1. Amount must be between 30€ and 800€.",
+    INVALID_BNPL_AMOUNT_PERIOD_2_3: "Invalid amount for Bnpl period 2 or 3. Amount must be between 75€ and 2500€.",
 };
