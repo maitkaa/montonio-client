@@ -35,5 +35,6 @@ export const ERRORS = {
     INVALID_HIRE_PURCHASE_AMOUNT: "Invalid amount for HirePurchase. Amount must be between 100€ and 10000€.",
     INVALID_BNPL_AMOUNT_PERIOD_1: "Invalid amount for Bnpl period 1. Amount must be between 30€ and 800€.",
     INVALID_BNPL_AMOUNT_PERIOD_2_3: "Invalid amount for Bnpl period 2 or 3. Amount must be between 75€ and 2500€.",
+    INVALID_BNPL_PERIOD: "Invalid period for Bnpl. Period must be 1, 2 or 3.",
     INVALID_CURRENCY: "Invalid currency. The only supported currency is PLN.",
 };

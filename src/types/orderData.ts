@@ -82,7 +82,7 @@ export interface HirePurchaseOptions {
 }
 
 export interface BnplOptions {
-    period: number; // can be either 1, 2, or 3, depending on the split period.
+    period: number;
 }
 
 export type PaymentOptions =

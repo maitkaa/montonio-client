@@ -150,6 +150,11 @@ export class MontonioClient {
             if (orderData.payment.method === PaymentMethod.Bnpl && "period" in orderData.payment.methodOptions) {
                 const period = orderData.payment.methodOptions.period;
                 const amount = orderData.payment.amount;
+
+                if (![1, 2, 3].includes(period)) {
+                    throw new Error(ERRORS.INVALID_BNPL_PERIOD);
+                }
+
                 if (period === 1 && (amount < 30 || amount > 800)) {
                     throw new Error(ERRORS.INVALID_BNPL_AMOUNT_PERIOD_1);
                 } else if ((period === 2 || period === 3) && (amount < 75 || amount > 2500)) {
