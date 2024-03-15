@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import qs from "qs";
 
 import { PaymentMethods, PaymentMethodsResponse } from "../types/PaymentMethod";
-import { ERRORS } from "../errors";
-import { OrderData, OrderResponse, PaymentStatus, RefundResponse } from "../types/orderData";
+import { ApiError, ERRORS, MontonioErrorResponse, NetworkError } from "../errors";
+import { OrderData, OrderResponse, PaymentDetails, PaymentStatus, RefundResponse } from "../types/orderData";
 import {
     Payout,
     PayoutExportResponse,
@@ -14,31 +14,16 @@ import {
     QueryParams, StoreBalanceResponse
 } from "../types/statistics";
 
-interface MontonioClientOptions {
+/**
+ * Montonio API client options
+ */
+export interface MontonioClientOptions {
     accessKey: string;
     secretKey: string;
     sandbox?: boolean; // Optional, defaults to true
     url?: string; // Optional, overrides sandbox logic
     endpoints?: { [key: string]: string }; // Optional, overrides some default endpoints
     storeUuid?: string; // Optional, for store payout statistics
-}
-
-interface MontonioErrorResponse {
-    message: string;
-}
-
-class ApiError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "ApiError";
-    }
-}
-
-class NetworkError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "NetworkError";
-    }
 }
 
 /**
@@ -82,6 +67,10 @@ export class MontonioClient {
         });
     }
 
+    /**
+     * Get authorization header
+     * @returns Authorization header
+     */
     private getAuthorizationHeader() {
         const payload = { accessKey: this.accessKey };
         const token = jwt.sign(payload, this.secretKey, { algorithm: "HS256", expiresIn: "10m" });
@@ -92,25 +81,24 @@ export class MontonioClient {
         };
     }
 
+    /**
+     * Handle Axios errors
+     * @param error - Error
+     */
     private handleAxiosError(error: unknown) {
         if (axios.isAxiosError(error)) {
             const axiosError = error as AxiosError<MontonioErrorResponse>;
             if (axiosError.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                throw new ApiError(`${ERRORS.API_REQUEST_FAILED}${axiosError.message}`);
+                throw new ApiError(`${ERRORS.API_REQUEST_FAILED}${axiosError.message} ${ERRORS.API_MONTONIO_RESPONSE}${axiosError.response.data.message}`);
             } else if (axiosError.request) {
-                // The request was made but no response was received
                 throw new NetworkError(`${ERRORS.NETWORK_ERROR}${axiosError.message}`);
             } else {
-                // Something happened in setting up the request that triggered an Error
                 throw new Error(axiosError.message);
             }
         } else {
             throw error;
         }
     }
-
 
     /**
      * Get available payment methods
@@ -156,9 +144,9 @@ export class MontonioClient {
      * @returns Order data
      */
     // eslint-disable-next-line @typescript-eslint/require-await
-    async validateOrder(orderToken: string): Promise<OrderResponse> {
+    async validateOrder(orderToken: string): Promise<PaymentDetails> {
         try {
-            return jwt.verify(orderToken, this.secretKey) as OrderResponse;
+            return jwt.verify(orderToken, this.secretKey) as PaymentDetails;
         } catch (error) {
             this.handleAxiosError(error);
             throw error;
@@ -181,7 +169,7 @@ export class MontonioClient {
      * @returns Order data
      */
     async getOrder(orderUuid: string): Promise<OrderResponse> {
-        if (!orderUuid) throw new Error(ERRORS.MISSING_UUID);
+        if (!orderUuid) throw new Error(ERRORS.MISSING_ORDER_UUID);
 
         try {
             const response = await this.axiosInstance.get<OrderResponse>(`/orders/${orderUuid}`,
@@ -194,7 +182,6 @@ export class MontonioClient {
         }
     }
 
-
     /**
      * Create a refund for an order
      * @param orderUuid - Order UUID
@@ -203,8 +190,8 @@ export class MontonioClient {
      */
     async createRefund(orderUuid: string, amount: number): Promise<RefundResponse> {
         try {
-            if (!orderUuid) throw new Error(ERRORS.MISSING_UUID);
-            if (amount.toFixed(2) !== amount.toString()) throw new Error(ERRORS.INVALID_AMOUNT_FORMAT);
+            if (!orderUuid) throw new Error(ERRORS.MISSING_ORDER_UUID);
+            if (parseFloat(amount.toFixed(2)) !== amount) throw new Error(ERRORS.INVALID_AMOUNT_FORMAT);
 
             const idempotencyKey = (uuidv4 as unknown as () => string)();
             const payload = {
@@ -215,7 +202,7 @@ export class MontonioClient {
             };
 
             const token = jwt.sign(payload, this.secretKey, { algorithm: "HS256", expiresIn: "10m" });
-            const response = await this.axiosInstance.post<RefundResponse>(this.endpoints.refunds, { data: token });
+            const response = await this.axiosInstance.post<RefundResponse>(this.endpoints.refundOrder, { data: token });
 
             return response.data;
         } catch (error) {
@@ -232,9 +219,7 @@ export class MontonioClient {
     async listPayments(input: QueryParams): Promise<Payout[]> {
         const { limit, offset, order, orderBy } = input;
         if (!this.storeUuid) throw new Error(ERRORS.MISSING_STORE_UUID);
-        if (!limit) throw new Error(ERRORS.MISSING_LIMIT);
         if (limit > 150) throw new Error(ERRORS.LIMIT_OVER_MAX);
-        if (!offset) throw new Error(ERRORS.MISSING_OFFSET);
 
         const queryValues: QueryParams = {
             limit,
@@ -286,7 +271,6 @@ export class MontonioClient {
     async getStoreBalances(): Promise<StoreBalanceResponse> {
         try {
             const response = await this.axiosInstance.get<StoreBalanceResponse>(this.endpoints.storeBalances, this.getAuthorizationHeader());
-
             return response.data;
         } catch (error) {
             this.handleAxiosError(error);

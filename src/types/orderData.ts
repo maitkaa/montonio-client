@@ -113,7 +113,7 @@ interface PaymentIntent {
     };
     amount: string;
     currency: string;
-    status: string;
+    status: PaymentStatus;
     serviceFee: string;
     serviceFeeCurrency: string;
     createdAt: string;
@@ -152,4 +152,23 @@ export interface RefundResponse {
     currency: string;
     createdAt: string;
     type: string;
+}
+
+export interface PaymentDetails {
+    uuid: string;
+    accessKey: string;
+    grandTotal: number;
+    merchantReference: string;
+    merchantReferenceDisplay: string;
+    paymentStatus: PaymentStatus;
+    paymentMethod: string;
+    paymentProviderName: string;
+    senderIban: string | null;
+    senderName: string | null;
+    currency: string;
+    merchant_reference: string;
+    merchant_reference_display: string;
+    payment_status: string;
+    iat: number;
+    exp: number;
 }

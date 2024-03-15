@@ -34,8 +34,8 @@ export interface PayoutsResponse {
 export interface QueryParams {
     limit: number;
     offset: number;
-    order?: PayoutOrderByOptions;
-    orderBy: "DESC" | "ASC";
+    orderBy?: PayoutOrderByOptions;
+    order: "DESC" | "ASC";
 }
 
 export interface PayoutExportResponse {
