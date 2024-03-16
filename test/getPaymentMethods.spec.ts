@@ -30,7 +30,14 @@ describe("MontonioClient", () => {
 
     it("should handle errors", async () => {
         const errorMessage = "Test error";
-        nock("https://sandbox-stargate.montonio.com")
+        nock("https://sandbox-stargate.montonio.com",
+            {
+                reqheaders: {
+                    "authorization": (headerValue) => {
+                        return headerValue !== undefined;
+                    },
+                },
+            })
             .get("/api/stores/payment-methods")
             .reply(400, { message: errorMessage });
 

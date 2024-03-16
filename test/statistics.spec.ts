@@ -52,7 +52,13 @@ describe("MontonioClient Payments and Balances", () => {
             },
         ];
 
-        nock("https://sandbox-stargate.montonio.com")
+        nock("https://sandbox-stargate.montonio.com", {
+            reqheaders: {
+                "authorization": (headerValue) => {
+                    return headerValue !== undefined;
+                },
+            },
+        })
             .get(`/api/stores/${options.storeUuid}/payouts?${qs.stringify(queryParams)}`)
             .reply(200, { payouts });
 
@@ -66,7 +72,13 @@ describe("MontonioClient Payments and Balances", () => {
         const payoutType = PayoutOutputType.EXCEL;
         const exportUrl = "https://example.com/export";
 
-        nock("https://sandbox-stargate.montonio.com")
+        nock("https://sandbox-stargate.montonio.com", {
+            reqheaders: {
+                "authorization": (headerValue) => {
+                    return headerValue !== undefined;
+                },
+            },
+        })
             .get(`/api/stores/${options.storeUuid}/payouts/${payoutUuid}/export-${payoutType}`)
             .reply(200, { url: exportUrl });
 
@@ -99,7 +111,13 @@ describe("MontonioClient Payments and Balances", () => {
         };
 
 
-        nock("https://sandbox-stargate.montonio.com")
+        nock("https://sandbox-stargate.montonio.com", {
+            reqheaders: {
+                "authorization": (headerValue) => {
+                    return headerValue !== undefined;
+                },
+            },
+        })
             .get("/api/store-balances")
             .reply(200, storeBalanceResponse);
 
