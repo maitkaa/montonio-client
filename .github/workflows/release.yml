@@ -3,6 +3,7 @@ on:
     push:
         branches:
             - dev
+
 jobs:
     changelog:
         runs-on: ubuntu-latest
@@ -13,14 +14,14 @@ jobs:
                 uses: TriPSs/conventional-changelog-action@v5.2.1
                 id: changelog
                 with:
-                    github-token: ${{ secrets.PA_TOKEN }}
+                    github-token: ${{ secrets.GITHUB_TOKEN }}
                     output-file: "false"
                     version-file: './package.json,./package-lock.json'
             -   name: Create Release
                 uses: actions/create-release@v1
                 if: ${{ steps.changelog.outputs.skipped == 'false' }}
                 env:
-                    GITHUB_TOKEN: ${{ secrets.PA_TOKEN }}
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 with:
                     tag_name: ${{ steps.changelog.outputs.tag }}
                     release_name: ${{ steps.changelog.outputs.tag }}
