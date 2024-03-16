@@ -3,6 +3,11 @@
     "author": "Mait Kaasik",
     "version": "1.0.0",
     "description": "Unofficial Montonio API client",
+    "keywords": [
+        "montonio",
+        "api",
+        "client"
+    ],
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
@@ -17,7 +22,6 @@
         "prepare": "husky",
         "watch": "tsup --watch"
     },
-    "keywords": [],
     "license": "ISC",
     "devDependencies": {
         "@swc/core": "^1.4.7",
