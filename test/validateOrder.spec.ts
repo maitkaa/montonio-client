@@ -26,13 +26,13 @@ describe("MontonioClient Order Validation", () => {
 
         it("should throw error for invalid order token", async () => {
             const orderToken = "invalidToken";
-
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
             await expect(client.validateOrder(orderToken)).rejects.toThrowError(ERRORS.ORDER_TOKEN_DECODE_FAILED);
         });
 
         it("should throw error for wrong access key", async () => {
             const orderToken = jwt.sign({ accessKey: "wrongAccessKey" }, options.secretKey);
-
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
             await expect(client.validateOrder(orderToken)).rejects.toThrowError(ERRORS.ORDER_TOKEN_DECODE_WRONG_ACCESS_KEY);
         });
     });

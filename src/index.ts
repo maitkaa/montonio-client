@@ -1,5 +1,4 @@
-export { MontonioClient, MontonioClientOptions } from "./client/client";
-export * from "./types/PaymentMethod";
-export * from "./types/statistics";
-export * from "./types/orderData";
+export { MontonioClient, MontonioClientOptions } from "./client";
+export * from "./types";
 export * from "./errors";
+export * from "./enums";

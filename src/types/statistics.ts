@@ -1,15 +1,19 @@
-import { Currency } from "./orderData";
+import { Currency, PayoutOrderByOptions } from "../enums";
 
-export enum PayoutOrderByOptions {
-    CREATED_AT = "createdAt",
-    SETTLEMENT_TYPE = "settlementType",
-    TOTAL_AMOUNT = "totalAmount",
-    STATUS = "status"
+export interface Balance {
+    currency: Currency;
+    balance: number;
 }
 
-export enum PayoutOutputType {
-    EXCEL = "excel",
-    XML = "xml"
+export interface Store {
+    uuid: string;
+    name: string;
+    legalName: string;
+}
+
+export interface Balances {
+    stripe: Balance[];
+    montonioMoneyMovement: Balance[];
 }
 
 export interface Payout {
@@ -33,31 +37,8 @@ export interface PayoutsResponse {
     payouts: Payout[];
 }
 
-export interface QueryParams {
-    limit: number;
-    offset: number;
-    orderBy?: PayoutOrderByOptions;
-    order: "DESC" | "ASC";
-}
-
 export interface PayoutExportResponse {
     url: string;
-}
-
-export interface Balance {
-    currency: Currency;
-    balance: number;
-}
-
-export interface Balances {
-    stripe: Balance[];
-    montonioMoneyMovement: Balance[];
-}
-
-export interface Store {
-    uuid: string;
-    name: string;
-    legalName: string;
 }
 
 export interface StoreBalanceResponse {
@@ -65,3 +46,9 @@ export interface StoreBalanceResponse {
     balances: Balances;
 }
 
+export interface QueryParams {
+    limit: number;
+    offset: number;
+    orderBy?: PayoutOrderByOptions;
+    order: "DESC" | "ASC";
+}

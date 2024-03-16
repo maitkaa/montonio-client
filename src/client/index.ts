@@ -1,26 +1,20 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
 import jwt from "jsonwebtoken";
-import { v4 as uuidv4 } from "uuid";
 import qs from "qs";
+import { v4 as uuidv4 } from "uuid";
 
-import { PaymentMethods, PaymentMethodsResponse } from "../types/PaymentMethod";
+import { Currency, PaymentMethod, PaymentStatus, PayoutOutputType } from "../enums";
 import { ApiError, ERRORS, MontonioErrorResponse, NetworkError } from "../errors";
 import {
-    Currency,
-    OrderData,
+    Order,
     OrderResponse,
     PaymentDetails,
-    PaymentMethod,
-    PaymentStatus,
-    RefundResponse
-} from "../types/orderData";
-import {
-    Payout,
-    PayoutExportResponse,
-    PayoutOutputType,
-    PayoutsResponse,
-    QueryParams, StoreBalanceResponse
-} from "../types/statistics";
+    PaymentMethods,
+    PaymentMethodsResponse, Payout, PayoutExportResponse, PayoutsResponse,
+    QueryParams,
+    RefundResponse, StoreBalanceResponse
+} from "../types";
+
 
 /**
  * Montonio API client options
@@ -122,7 +116,7 @@ export class MontonioClient {
      * @param orderData - Order data
      * @returns Payment URL
      */
-    async createOrder(orderData: OrderData): Promise<string> {
+    async createOrder(orderData: Order): Promise<string> {
         try {
             // Check if payment method is HirePurchase
             if (orderData.payment.method === PaymentMethod.HirePurchase) {

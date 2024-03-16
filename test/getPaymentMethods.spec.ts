@@ -42,6 +42,7 @@ describe("MontonioClient", () => {
             .reply(400, { message: errorMessage });
 
         await expect(client.getPaymentMethods()).rejects.toThrowError(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
             `${ERRORS.API_REQUEST_FAILED}Request failed with status code 400 ${ERRORS.API_MONTONIO_RESPONSE}${errorMessage}`
         );
     });

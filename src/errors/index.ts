@@ -17,7 +17,7 @@ export class NetworkError extends Error {
     }
 }
 
-export const ERRORS = {
+export const ERRORS: { [key: string]: string } = {
     MISSING_OPTIONS: "Missing required parameter: options ",
     API_REQUEST_FAILED: "API request failed: ",
     API_MONTONIO_RESPONSE: "Montonio response: ",

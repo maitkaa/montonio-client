@@ -41,6 +41,7 @@
         "import/order": [
             "error",
             {
+                "newlines-between": "always",
                 "groups": [
                     "builtin",
                     "external",
@@ -49,7 +50,10 @@
                     "sibling",
                     "index"
                 ],
-                "newlines-between": "always"
+                "alphabetize": {
+                    "order": "asc",
+                    "caseInsensitive": true
+                }
             }
         ]
     }

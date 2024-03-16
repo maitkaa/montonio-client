@@ -40,7 +40,7 @@ describe("MontonioClient Refund Creation", () => {
     it("should throw error for invalid amount format", async () => {
         const orderUuid = "testOrderUuid";
         const amount = 100.123;
-
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
         await expect(client.createRefund(orderUuid, amount)).rejects.toThrowError(ERRORS.INVALID_AMOUNT_FORMAT);
     });
 
@@ -54,6 +54,7 @@ describe("MontonioClient Refund Creation", () => {
             .replyWithError(errorMessage);
 
         await expect(client.createRefund(orderUuid, amount)).rejects.toThrowError(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
             `${ERRORS.NETWORK_ERROR}${errorMessage}`
         );
     });

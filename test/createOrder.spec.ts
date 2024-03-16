@@ -8,7 +8,7 @@ import {
     Locale,
     MontonioClient,
     MontonioClientOptions,
-    OrderData,
+    Order,
     PaymentMethod
 } from "../src";
 
@@ -26,7 +26,7 @@ const address: Address = {
     country: "EE"
 };
 
-const orderData: OrderData = {
+const orderData: Order = {
     merchantReference: "Order1234567",
     returnUrl: "http://localhost:3000/return",
     notificationUrl: "http://example.com/payment/notify",
@@ -87,7 +87,7 @@ describe("Create order", () => {
                 amount: 99,
             },
         };
-
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
         await expect(client.createOrder(extendedOrderData)).rejects.toThrowError(ERRORS.INVALID_HIRE_PURCHASE_AMOUNT);
     });
 
@@ -100,7 +100,7 @@ describe("Create order", () => {
                 currency: Currency.EUR,
             },
         };
-
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
         await expect(client.createOrder(extendedOrderData)).rejects.toThrowError(ERRORS.INVALID_CURRENCY);
     });
 
@@ -116,7 +116,7 @@ describe("Create order", () => {
                 },
             },
         };
-
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
         await expect(client.createOrder(extendedOrderData)).rejects.toThrowError(ERRORS.INVALID_BNPL_PERIOD);
     });
 
@@ -133,7 +133,7 @@ describe("Create order", () => {
                 amount: 29,
             },
         };
-
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
         await expect(client.createOrder(extendedOrderData)).rejects.toThrowError(ERRORS.INVALID_BNPL_AMOUNT_PERIOD_1);
     });
 
@@ -150,7 +150,7 @@ describe("Create order", () => {
                 amount: 74,
             },
         };
-
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
         await expect(client.createOrder(extendedOrderData)).rejects.toThrowError(ERRORS.INVALID_BNPL_AMOUNT_PERIOD_2_3);
     });
 
@@ -163,6 +163,7 @@ describe("Create order", () => {
             .replyWithError(errorMessage);
 
         await expect(client.createOrder(orderData)).rejects.toThrowError(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
             `${ERRORS.NETWORK_ERROR}${errorMessage}`
         );
     });

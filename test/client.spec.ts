@@ -1,6 +1,6 @@
 import { ERRORS, MontonioClient, MontonioClientOptions } from "../src";
 
-describe("MontonioClient", () => {
+describe("Client", () => {
     let options: MontonioClientOptions;
 
     beforeEach(() => {
@@ -22,7 +22,7 @@ describe("MontonioClient", () => {
     it("should throw an error when required options are missing", () => {
         options.accessKey = "";
         options.secretKey = "";
-
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
         expect(() => new MontonioClient(options)).toThrowError(ERRORS.MISSING_OPTIONS);
     });
 });
