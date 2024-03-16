@@ -18,9 +18,7 @@ export class NetworkError extends Error {
 }
 
 export const ERRORS = {
-    MISSING_OPTIONS: "Missing required parameter: options",
-    MISSING_ACCESS_KEY: "Missing required option: accessKey",
-    MISSING_SECRET_KEY: "Missing required option: secretKey",
+    MISSING_OPTIONS: "Missing required parameter: options ",
     API_REQUEST_FAILED: "API request failed: ",
     API_MONTONIO_RESPONSE: "Montonio response: ",
     ORDER_TOKEN_DECODE_FAILED: "Failed to decode order token",

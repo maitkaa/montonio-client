@@ -1,3 +1,5 @@
+import { Currency } from "./orderData";
+
 export enum PayoutOrderByOptions {
     CREATED_AT = "createdAt",
     SETTLEMENT_TYPE = "settlementType",
@@ -22,7 +24,7 @@ export interface Payout {
     paymentsAmount: string;
     refundsAmount: string;
     totalAmount: string;
-    currency: string;
+    currency: Currency;
     expectedArrivalDate: string | null;
     createdAt: string;
 }
@@ -43,7 +45,7 @@ export interface PayoutExportResponse {
 }
 
 export interface Balance {
-    currency: string;
+    currency: Currency;
     balance: number;
 }
 

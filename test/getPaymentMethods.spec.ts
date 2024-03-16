@@ -1,36 +1,42 @@
 import nock from "nock";
 
-import { MontonioClient } from "../src/client/client";
-
+import { MontonioClient, MontonioClientOptions } from "../src";
+import { ERRORS } from "../src";
 
 describe("MontonioClient", () => {
+    let options: MontonioClientOptions;
     let client: MontonioClient;
 
     beforeEach(() => {
-        client = new MontonioClient({
+        options = {
             accessKey: "testAccessKey",
             secretKey: "testSecretKey",
-            sandbox: true
-        });
+            sandbox: true,
+        };
+        client = new MontonioClient(options);
     });
 
-    it("should get payment methods", async () => {
-        const mockPaymentMethods = ["method1", "method2"];
+    it("should fetch payment methods", async () => {
+        const paymentMethods = ["paymentInitiation", "cardPayments", "blik", "bnpl", "hirePurchase"];
 
-        nock("https://sandbox-payments.montonio.com")
-            .get("/stores/payment-methods")
-            .reply(200, { paymentMethods: mockPaymentMethods });
+        nock("https://sandbox-stargate.montonio.com")
+            .get("/api/stores/payment-methods")
+            .reply(200, { paymentMethods });
 
-        const paymentMethods = await client.getPaymentMethods();
+        const result = await client.getPaymentMethods();
 
-        expect(paymentMethods).toEqual(mockPaymentMethods);
+        expect(result).toEqual(paymentMethods);
     });
 
-    it("should throw error when request fails", async () => {
-        nock("https://sandbox-payments.montonio.com")
-            .get("/stores/payment-methods")
-            .replyWithError("Something went wrong");
+    it("should handle errors", async () => {
+        const errorMessage = "Test error";
+        nock("https://sandbox-stargate.montonio.com")
+            .get("/api/stores/payment-methods")
+            .reply(400, { message: errorMessage });
 
-        await expect(client.getPaymentMethods()).rejects.toThrow("API request failed: Something went wrong");
+        await expect(client.getPaymentMethods()).rejects.toThrowError(
+            `${ERRORS.API_REQUEST_FAILED}Request failed with status code 400 ${ERRORS.API_MONTONIO_RESPONSE}${errorMessage}`
+        );
     });
+
 });
