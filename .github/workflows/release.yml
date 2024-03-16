@@ -17,6 +17,7 @@ jobs:
                     github-token: ${{ secrets.GITHUB_TOKEN }}
                     output-file: "false"
                     version-file: './package.json,./package-lock.json'
+                    skip-ci: "false"
             -   name: Create Release
                 uses: comnoco/create-release-action@v2.0.5
                 if: ${{ steps.changelog.outputs.skipped == 'false' }}
