@@ -3,12 +3,14 @@
 This is an unofficial client for the Montonio API. It provides a convenient way to interact with the Montonio API from
 your JavaScript or TypeScript code.
 
+[Montonio API Docs](https://docs.montonio.com/introduction)
+
 ## Installation
 
 To install the client, you can use npm:
 
 ```bash
-npm install --save maitkaa/montonio-client
+npm install --save @almightytech/montonio-client
 ```
 
 ## Usage
@@ -16,7 +18,7 @@ npm install --save maitkaa/montonio-client
 First, import the client:
 
 ```javascript
-import { MontonioClient, MontonioClientOptions } from 'maitkaa/montonio-client';
+import { MontonioClient, MontonioClientOptions } from '@almightytech/montonio-client';
 ```
 
 Then, create a new client instance:
