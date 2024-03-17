@@ -1,4 +1,4 @@
-name: Publish to NPM and Generate Changelog
+name: 🧪 Test, 🏗️ Build, 📦 Release and 🚀 Publish To NPM
 
 on:
     push:
@@ -10,25 +10,27 @@ jobs:
         runs-on: ubuntu-latest
         environment: Production
         steps:
-            -   uses: actions/checkout@v4.1.1
-            -   uses: actions/setup-node@v4.0.2
+            -   name: 📥 Checkout Code
+                uses: actions/checkout@v4.1.1
+            -   name: 🛠️ Setup Node.js
+                uses: actions/setup-node@v4.0.2
                 with:
                     node-version: 20
                     registry-url: 'https://registry.npmjs.org'
-            -   name: Install dependencies and build
+            -   name: 📦 Install Dependencies and Build
                 run: npm ci
-            -   name: Run tests
+            -   name: 🧪 Run Tests
                 run: npm test
-            -   name: Build package
+            -   name: 🏗️ Build Package
                 run: npm run build
-            -   name: Generate Changelog
+            -   name: 📜 Generate Changelog
                 uses: TriPSs/conventional-changelog-action@v5.2.1
                 id: changelog
                 with:
                     github-token: ${{ secrets.PA_TOKEN }}
                     output-file: "false"
                     version-file: './package.json,./package-lock.json'
-            -   name: Create Release (if changelog generated)
+            -   name: 🎉 Create Release (if changelog generated)
                 uses: comnoco/create-release-action@v2.0.5
                 if: ${{ steps.changelog.outputs.skipped == 'false' }}
                 env:
@@ -37,7 +39,7 @@ jobs:
                     tag_name: ${{ steps.changelog.outputs.tag }}
                     release_name: ${{ steps.changelog.outputs.tag }}
                     body: ${{ steps.changelog.outputs.clean_changelog }}
-            -   name: Publish package on NPM
+            -   name: 📤 Publish Package on NPM
                 run: npm publish --access public
                 env:
                     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
