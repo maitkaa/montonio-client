@@ -1,42 +1,43 @@
 name: Publish to NPM and Generate Changelog
 
 on:
-  push:
-    branches:
-      - master
+    push:
+        branches:
+            - master
 
 jobs:
-  build_test_and_release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4.1.1
-      - uses: actions/setup-node@v4.0.2
-        with:
-          node-version: 20
-          registry-url: 'https://registry.npmjs.org'
-      - name: Install dependencies and build 
-        run: npm ci
-      - name: Run tests 
-        run: npm test
-      - name: Build package 
-        run: npm run build
-      - name: Generate Changelog
-        uses: TriPSs/conventional-changelog-action@v5.2.1
-        id: changelog
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          output-file: "false"
-          version-file: './package.json,./package-lock.json'
-      - name: Create Release (if changelog generated)
-        uses: comnoco/create-release-action@v2.0.5
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.changelog.outputs.tag }}
-          release_name: ${{ steps.changelog.outputs.tag }}
-          body: ${{ steps.changelog.outputs.clean_changelog }}
-      - name: Publish package on NPM 
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    build_test_and_release:
+        runs-on: ubuntu-latest
+        environment: Production
+        steps:
+            -   uses: actions/checkout@v4.1.1
+            -   uses: actions/setup-node@v4.0.2
+                with:
+                    node-version: 20
+                    registry-url: 'https://registry.npmjs.org'
+            -   name: Install dependencies and build
+                run: npm ci
+            -   name: Run tests
+                run: npm test
+            -   name: Build package
+                run: npm run build
+            -   name: Generate Changelog
+                uses: TriPSs/conventional-changelog-action@v5.2.1
+                id: changelog
+                with:
+                    github-token: ${{ secrets.PA_TOKEN }}
+                    output-file: "false"
+                    version-file: './package.json,./package-lock.json'
+            -   name: Create Release (if changelog generated)
+                uses: comnoco/create-release-action@v2.0.5
+                if: ${{ steps.changelog.outputs.skipped == 'false' }}
+                env:
+                    GITHUB_TOKEN: ${{ secrets.PA_TOKEN }}
+                with:
+                    tag_name: ${{ steps.changelog.outputs.tag }}
+                    release_name: ${{ steps.changelog.outputs.tag }}
+                    body: ${{ steps.changelog.outputs.clean_changelog }}
+            -   name: Publish package on NPM
+                run: npm publish --access public
+                env:
+                    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
