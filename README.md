@@ -1,13 +1,15 @@
 # Unofficial Montonio API Client
 
+![CI/CD](https://github.com/maitkaa/montonio-client/actions/workflows/release.yml/badge.svg)
+[![npm version](https://badgen.net/npm/v/@almightytech/montonio-client)](https://www.npmjs.com/package/@almightytech/montonio-client)
+![GitHub release](https://badgen.net/github/release/maitkaa/montonio-client)
+
 This is an unofficial client for the Montonio API. It provides a convenient way to interact with the Montonio API from
 your JavaScript or TypeScript code.
 
 [Montonio API Docs](https://docs.montonio.com/introduction)
 
 ## Installation
-
-[NPM:@almightytech/montonio-client](https://www.npmjs.com/package/@almightytech/montonio-client)
 
 To install the client, you can use npm:
 

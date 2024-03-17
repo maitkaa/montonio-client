@@ -1,0 +1,24 @@
+name: 🚀 Test and Build
+
+on:
+    push:
+        branches-ignore:
+            - master
+
+jobs:
+    build_and_test:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: 📥 Checkout Code
+                uses: actions/checkout@v4.1.1
+            -   name: 🛠️ Setup Node.js
+                uses: actions/setup-node@v4.0.2
+                with:
+                    node-version: 20
+                    registry-url: 'https://registry.npmjs.org'
+            -   name: 📦 Install Dependencies and Build
+                run: npm ci
+            -   name: 🧪 Run Tests
+                run: npm test
+            -   name: 🏗️ Build Package
+                run: npm run build
