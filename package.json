@@ -1,6 +1,6 @@
 {
   "name": "@almightytech/montonio-client",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "author": "Mait Kaasik",
   "repository": "https://github.com/maitkaa/montonio-client",
   "description": "Unofficial Montonio API client",
