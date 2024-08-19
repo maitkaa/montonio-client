@@ -26,7 +26,6 @@ export {
     BlikOptions,
     BnplOptions,
     CardPaymentsOptions,
-    HirePurchaseOptions,
     LineItem,
     Order,
     OrderResponse,

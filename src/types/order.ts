@@ -33,9 +33,6 @@ export interface CardPaymentsOptions {
     preferredLocale: Locale;
 }
 
-export interface HirePurchaseOptions {
-}
-
 export interface LineItem {
     name: string;
     quantity: number;

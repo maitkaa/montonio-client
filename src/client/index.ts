@@ -173,6 +173,7 @@ export class MontonioClient {
             try {
                 decoded = jwt.verify(orderToken, this.secretKey) as PaymentDetails;
             } catch (error) {
+                console.error(error);
                 throw new Error(ERRORS.ORDER_TOKEN_DECODE_FAILED);
             }
             if (!decoded) throw new Error(ERRORS.ORDER_TOKEN_DECODE_FAILED);
