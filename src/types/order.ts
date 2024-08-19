@@ -118,7 +118,6 @@ export type PaymentOptions =
     PaymentInitiationOptions
     | CardPaymentsOptions
     | BlikOptions
-    | HirePurchaseOptions
     | BnplOptions;
 
 export interface PaymentIntent {
