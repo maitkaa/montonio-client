@@ -62,7 +62,7 @@ describe("MontonioClient Payments and Balances", () => {
             .get(`/api/stores/${options.storeUuid}/payouts?${qs.stringify(queryParams)}`)
             .reply(200, { payouts });
 
-        const result = await client.listPayments(queryParams);
+        const result = await client.listPayouts(queryParams);
 
         expect(result).toEqual(payouts);
     });

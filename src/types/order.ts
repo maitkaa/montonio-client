@@ -121,9 +121,6 @@ export interface PaymentDetails {
     senderIban: string | null;
     senderName: string | null;
     currency: Currency;
-    merchant_reference: string;
-    merchant_reference_display: string;
-    payment_status: string;
     iat: number;
     exp: number;
 }

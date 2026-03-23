@@ -205,7 +205,7 @@ export class MontonioClient extends MontonioBaseClient {
      * @param input - Query parameters (limit, offset, order, orderBy)
      * @returns Payouts[]
      */
-    async listPayments(input: QueryParams): Promise<Payout[]> {
+    async listPayouts(input: QueryParams): Promise<Payout[]> {
         const { limit, offset, order, orderBy } = input;
         if (!this.storeUuid) throw new Error(ERRORS.MISSING_STORE_UUID);
         if (limit > 150) throw new Error(ERRORS.LIMIT_OVER_MAX);
@@ -217,7 +217,7 @@ export class MontonioClient extends MontonioBaseClient {
             orderBy
         };
 
-        const queryParams = (qs as unknown as { stringify: (obj: QueryParams) => string }).stringify(queryValues);
+        const queryParams = qs.stringify(queryValues);
 
         const endpoint = `/stores/${this.storeUuid}/payouts?${queryParams}`;
 
