@@ -1,8 +1,5 @@
-import axios, { AxiosError, AxiosInstance } from "axios";
-import jwt from "jsonwebtoken";
-
 import { PickupPointSubtype } from "../enums";
-import { ApiError, ERRORS, MontonioErrorResponse, NetworkError } from "../errors";
+import { ERRORS } from "../errors";
 import {
     Carrier,
     CarriersResponse,
@@ -14,6 +11,7 @@ import {
     ShippingMethod,
     ShippingMethodsResponse,
 } from "../types";
+import { MontonioBaseClient } from "../base";
 
 export interface MontonioShippingClientOptions {
     accessKey: string;
@@ -22,11 +20,7 @@ export interface MontonioShippingClientOptions {
     url?: string;
 }
 
-export class MontonioShippingClient {
-    private readonly baseUrl: string;
-    private readonly axiosInstance: AxiosInstance;
-    private readonly accessKey: string;
-    private readonly secretKey: string;
+export class MontonioShippingClient extends MontonioBaseClient {
 
     constructor(options: MontonioShippingClientOptions) {
         if (!options || !options.accessKey || !options.secretKey) {
@@ -35,40 +29,11 @@ export class MontonioShippingClient {
 
         const { accessKey, secretKey, sandbox, url } = options;
 
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
-        this.baseUrl = url ?? (sandbox !== false
+        const baseUrl = url ?? (sandbox !== false
             ? "https://sandbox-shipping.montonio.com/api"
             : "https://shipping.montonio.com/api");
 
-        this.axiosInstance = axios.create({
-            baseURL: this.baseUrl,
-        });
-    }
-
-    private getAuthorizationHeader() {
-        const payload = { accessKey: this.accessKey };
-        const token = jwt.sign(payload, this.secretKey, { algorithm: "HS256", expiresIn: "10m" });
-        return {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        };
-    }
-
-    private handleAxiosError(error: unknown) {
-        if (axios.isAxiosError(error)) {
-            const axiosError = error as AxiosError<MontonioErrorResponse>;
-            if (axiosError.response) {
-                throw new ApiError(`${ERRORS.API_REQUEST_FAILED}${axiosError.message} ${ERRORS.API_MONTONIO_RESPONSE}${axiosError.response.data.message}`);
-            } else if (axiosError.request) {
-                throw new NetworkError(`${ERRORS.NETWORK_ERROR}${axiosError.message}`);
-            } else {
-                throw new Error(axiosError.message);
-            }
-        } else {
-            throw error;
-        }
+        super(accessKey, secretKey, baseUrl);
     }
 
     /**
@@ -81,7 +46,6 @@ export class MontonioShippingClient {
             return response.data.carriers;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
     }
 
@@ -95,7 +59,6 @@ export class MontonioShippingClient {
             return response.data.shippingMethods;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
     }
 
@@ -118,7 +81,6 @@ export class MontonioShippingClient {
             return response.data.pickupPoints;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
     }
 
@@ -137,7 +99,6 @@ export class MontonioShippingClient {
             return response.data;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
     }
 
@@ -155,7 +116,6 @@ export class MontonioShippingClient {
             return response.data;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
     }
 
@@ -173,7 +133,6 @@ export class MontonioShippingClient {
             return response.data.url;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
     }
 }
