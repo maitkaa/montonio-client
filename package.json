@@ -26,6 +26,9 @@
         "upgrade": "ncu -u"
     },
     "license": "MIT",
+    "engines": {
+        "node": ">=18.0.0"
+    },
     "devDependencies": {
         "@swc/core": "^1.7.24",
         "@types/jest": "^29.5.12",

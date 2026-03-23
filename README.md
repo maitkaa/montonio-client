@@ -147,7 +147,7 @@ const paid = await client.isOrderPaid(orderToken);
 const refund = await client.createRefund('order-uuid', 49.99);
 
 // List payouts (requires storeUuid in options)
-const payouts = await client.listPayments({ limit: 50, offset: 0, order: 'DESC' });
+const payouts = await client.listPayouts({ limit: 50, offset: 0, order: 'DESC' });
 
 // Export payout report
 const { PayoutOutputType } = require('@almightytech/montonio-client');
