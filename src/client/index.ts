@@ -9,6 +9,8 @@ import {
     Order,
     OrderResponse,
     PaymentDetails,
+    PaymentLinkOptions,
+    PaymentLinkResponse,
     PaymentMethods,
     PaymentMethodsResponse, Payout, PayoutExportResponse, PayoutsResponse,
     QueryParams,
@@ -223,7 +225,7 @@ export class MontonioClient {
         try {
             if (parseFloat(amount.toFixed(2)) !== amount) throw new Error(ERRORS.INVALID_AMOUNT_FORMAT);
 
-            const idempotencyKey = (uuidv4 as unknown as () => string)();
+            const idempotencyKey = uuidv4();
             const payload = {
                 accessKey: this.accessKey,
                 orderUuid,
@@ -300,6 +302,50 @@ export class MontonioClient {
         try {
             const response = await this.axiosInstance.get<StoreBalanceResponse>(this.endpoints.storeBalances, this.getAuthorizationHeader());
             return response.data;
+        } catch (error) {
+            this.handleAxiosError(error);
+            throw error;
+        }
+    }
+
+    /**
+     * Create a payment link
+     * @param options - Payment link options
+     * @returns Payment URL
+     */
+    async createPaymentLink(options: PaymentLinkOptions): Promise<PaymentLinkResponse> {
+        try {
+            const token = jwt.sign(
+                { accessKey: this.accessKey, ...options },
+                this.secretKey,
+                { algorithm: "HS256", expiresIn: "10m" }
+            );
+            const response = await this.axiosInstance.post<PaymentLinkResponse>("/payment-links", { data: token });
+            return response.data;
+        } catch (error) {
+            this.handleAxiosError(error);
+            throw error;
+        }
+    }
+
+    /**
+     * Validate an incoming webhook JWT token from Montonio
+     * @param webhookToken - JWT token received in the webhook notification
+     * @returns Decoded payment details
+     */
+    // eslint-disable-next-line @typescript-eslint/require-await
+    async validateWebhook(webhookToken: string): Promise<PaymentDetails> {
+        try {
+            let decoded;
+            try {
+                decoded = jwt.verify(webhookToken, this.secretKey) as PaymentDetails;
+            } catch (error) {
+                console.error(error);
+                throw new Error(ERRORS.ORDER_TOKEN_DECODE_FAILED);
+            }
+            if (!decoded) throw new Error(ERRORS.ORDER_TOKEN_DECODE_FAILED);
+            if (decoded.accessKey !== this.accessKey) throw new Error(ERRORS.ORDER_TOKEN_DECODE_WRONG_ACCESS_KEY);
+            return decoded;
         } catch (error) {
             this.handleAxiosError(error);
             throw error;

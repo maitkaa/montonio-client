@@ -26,6 +26,9 @@ export {
     BlikOptions,
     BnplOptions,
     CardPaymentsOptions,
+    MobileWalletOptions,
+    PaymentLinkOptions,
+    PaymentLinkResponse,
     LineItem,
     Order,
     OrderResponse,
@@ -35,3 +38,18 @@ export {
     PaymentOptions,
     PaymentIntent
 } from "./order";
+
+export {
+    CreateShipmentRequest,
+    ShipmentReceiver,
+    ShipmentParcel,
+    ShipmentShippingMethod,
+    ShipmentResponse,
+    PickupPoint,
+    PickupPointsResponse,
+    Carrier,
+    CarriersResponse,
+    ShippingMethod,
+    ShippingMethodsResponse,
+    ShipmentLabelResponse
+} from "./shipping";

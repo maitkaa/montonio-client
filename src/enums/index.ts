@@ -48,3 +48,19 @@ export enum PayoutOutputType {
     EXCEL = "excel",
     XML = "xml"
 }
+
+export enum WalletProvider {
+    ApplePay = "applePay",
+    GooglePay = "googlePay"
+}
+
+export enum ShippingMethodType {
+    PickupPoint = "pickup_point",
+    CourierDelivery = "courier",
+}
+
+export enum PickupPointSubtype {
+    ParcelMachine = "parcel_machine",
+    ParcelShop = "parcel_shop",
+    PostOffice = "post_office",
+}
