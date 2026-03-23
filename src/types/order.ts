@@ -1,4 +1,4 @@
-import { CardPaymentMethod, Currency, Locale, PaymentMethod, PaymentStatus } from "../enums";
+import { CardPaymentMethod, Currency, Locale, PaymentMethod, PaymentStatus, WalletProvider } from "../enums";
 
 import { RefundResponse } from "./refund";
 
@@ -31,6 +31,28 @@ export interface BnplOptions {
 export interface CardPaymentsOptions {
     preferredMethod: CardPaymentMethod;
     preferredLocale: Locale;
+}
+
+export interface MobileWalletOptions {
+    preferredMethod: CardPaymentMethod.WALLET;
+    preferredLocale?: Locale;
+    preferredWallet?: WalletProvider;
+}
+
+export interface PaymentLinkOptions {
+    amount: number;
+    currency: Currency;
+    merchantReference: string;
+    description?: string;
+    preferredProvider?: string;
+    locale?: Locale;
+    returnUrl: string;
+    notificationUrl: string;
+}
+
+export interface PaymentLinkResponse {
+    paymentUrl: string;
+    uuid: string;
 }
 
 export interface LineItem {
@@ -99,9 +121,6 @@ export interface PaymentDetails {
     senderIban: string | null;
     senderName: string | null;
     currency: Currency;
-    merchant_reference: string;
-    merchant_reference_display: string;
-    payment_status: string;
     iat: number;
     exp: number;
 }
@@ -117,6 +136,7 @@ export interface PaymentInitiationOptions {
 export type PaymentOptions =
     PaymentInitiationOptions
     | CardPaymentsOptions
+    | MobileWalletOptions
     | BlikOptions
     | BnplOptions;
 

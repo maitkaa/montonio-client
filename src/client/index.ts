@@ -1,14 +1,16 @@
-import axios, { AxiosError, AxiosInstance } from "axios";
 import jwt from "jsonwebtoken";
 import qs from "qs";
 import { v4 as uuidv4 } from "uuid";
 
+import { MontonioBaseClient } from "../base";
 import { Currency, PaymentMethod, PaymentStatus, PayoutOutputType } from "../enums";
-import { ApiError, ERRORS, MontonioErrorResponse, NetworkError } from "../errors";
+import { ERRORS } from "../errors";
 import {
     Order,
     OrderResponse,
     PaymentDetails,
+    PaymentLinkOptions,
+    PaymentLinkResponse,
     PaymentMethods,
     PaymentMethodsResponse, Payout, PayoutExportResponse, PayoutsResponse,
     QueryParams,
@@ -31,12 +33,8 @@ export interface MontonioClientOptions {
 /**
  * Montonio API client
  */
-export class MontonioClient {
-    private readonly baseUrl: string;
-    private readonly axiosInstance: AxiosInstance;
+export class MontonioClient extends MontonioBaseClient {
     private readonly endpoints: { [key: string]: string };
-    private readonly accessKey: string;
-    private readonly secretKey: string;
     private readonly storeUuid?: string;
 
     constructor(options: MontonioClientOptions) {
@@ -46,9 +44,12 @@ export class MontonioClient {
 
         const { accessKey, secretKey, sandbox, url, endpoints, storeUuid } = options;
 
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
-        this.baseUrl = url ?? (sandbox ? "https://sandbox-stargate.montonio.com/api" : "https://stargate.montonio.com/api");
+        const baseUrl = url ?? (sandbox !== false
+            ? "https://sandbox-stargate.montonio.com/api"
+            : "https://stargate.montonio.com/api");
+
+        super(accessKey, secretKey, baseUrl);
+
         this.endpoints = endpoints ?? {
             getPaymentMethods: "/stores/payment-methods",
             createOrder: "/orders",
@@ -56,42 +57,6 @@ export class MontonioClient {
             storeBalances: "/store-balances",
         };
         this.storeUuid = storeUuid;
-        this.axiosInstance = axios.create({
-            baseURL: this.baseUrl,
-        });
-    }
-
-    /**
-     * Get authorization header
-     * @returns Authorization header
-     */
-    private getAuthorizationHeader() {
-        const payload = { accessKey: this.accessKey };
-        const token = jwt.sign(payload, this.secretKey, { algorithm: "HS256", expiresIn: "10m" });
-        return {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        };
-    }
-
-    /**
-     * Handle Axios errors
-     * @param error - Error
-     */
-    private handleAxiosError(error: unknown) {
-        if (axios.isAxiosError(error)) {
-            const axiosError = error as AxiosError<MontonioErrorResponse>;
-            if (axiosError.response) {
-                throw new ApiError(`${ERRORS.API_REQUEST_FAILED}${axiosError.message} ${ERRORS.API_MONTONIO_RESPONSE}${axiosError.response.data.message}`);
-            } else if (axiosError.request) {
-                throw new NetworkError(`${ERRORS.NETWORK_ERROR}${axiosError.message}`);
-            } else {
-                throw new Error(axiosError.message);
-            }
-        } else {
-            throw error;
-        }
     }
 
     /**
@@ -107,7 +72,6 @@ export class MontonioClient {
             return response.data.paymentMethods;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
     }
 
@@ -157,7 +121,6 @@ export class MontonioClient {
             return response.data.paymentUrl;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
     }
 
@@ -172,8 +135,7 @@ export class MontonioClient {
             let decoded;
             try {
                 decoded = jwt.verify(orderToken, this.secretKey) as PaymentDetails;
-            } catch (error) {
-                console.error(error);
+            } catch {
                 throw new Error(ERRORS.ORDER_TOKEN_DECODE_FAILED);
             }
             if (!decoded) throw new Error(ERRORS.ORDER_TOKEN_DECODE_FAILED);
@@ -181,7 +143,6 @@ export class MontonioClient {
             return decoded;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
     }
 
@@ -209,7 +170,6 @@ export class MontonioClient {
             return response.data;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
     }
 
@@ -223,7 +183,7 @@ export class MontonioClient {
         try {
             if (parseFloat(amount.toFixed(2)) !== amount) throw new Error(ERRORS.INVALID_AMOUNT_FORMAT);
 
-            const idempotencyKey = (uuidv4 as unknown as () => string)();
+            const idempotencyKey = uuidv4();
             const payload = {
                 accessKey: this.accessKey,
                 orderUuid,
@@ -237,7 +197,6 @@ export class MontonioClient {
             return response.data;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
     }
 
@@ -246,7 +205,7 @@ export class MontonioClient {
      * @param input - Query parameters (limit, offset, order, orderBy)
      * @returns Payouts[]
      */
-    async listPayments(input: QueryParams): Promise<Payout[]> {
+    async listPayouts(input: QueryParams): Promise<Payout[]> {
         const { limit, offset, order, orderBy } = input;
         if (!this.storeUuid) throw new Error(ERRORS.MISSING_STORE_UUID);
         if (limit > 150) throw new Error(ERRORS.LIMIT_OVER_MAX);
@@ -258,7 +217,7 @@ export class MontonioClient {
             orderBy
         };
 
-        const queryParams = (qs as unknown as { stringify: (obj: QueryParams) => string }).stringify(queryValues);
+        const queryParams = qs.stringify(queryValues);
 
         const endpoint = `/stores/${this.storeUuid}/payouts?${queryParams}`;
 
@@ -267,7 +226,6 @@ export class MontonioClient {
             return response.data.payouts;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
     }
 
@@ -287,7 +245,6 @@ export class MontonioClient {
             return response.data.url;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
         }
 
     }
@@ -302,7 +259,47 @@ export class MontonioClient {
             return response.data;
         } catch (error) {
             this.handleAxiosError(error);
-            throw error;
+        }
+    }
+
+    /**
+     * Create a payment link
+     * @param options - Payment link options
+     * @returns Payment URL and UUID
+     */
+    async createPaymentLink(options: PaymentLinkOptions): Promise<PaymentLinkResponse> {
+        try {
+            const token = jwt.sign(
+                { accessKey: this.accessKey, ...options },
+                this.secretKey,
+                { algorithm: "HS256", expiresIn: "10m" }
+            );
+            const response = await this.axiosInstance.post<PaymentLinkResponse>("/payment-links", { data: token });
+            return response.data;
+        } catch (error) {
+            this.handleAxiosError(error);
+        }
+    }
+
+    /**
+     * Validate an incoming webhook JWT token from Montonio
+     * @param webhookToken - JWT token received in the webhook notification
+     * @returns Decoded payment details
+     */
+    // eslint-disable-next-line @typescript-eslint/require-await
+    async validateWebhook(webhookToken: string): Promise<PaymentDetails> {
+        try {
+            let decoded;
+            try {
+                decoded = jwt.verify(webhookToken, this.secretKey) as PaymentDetails;
+            } catch {
+                throw new Error(ERRORS.ORDER_TOKEN_DECODE_FAILED);
+            }
+            if (!decoded) throw new Error(ERRORS.ORDER_TOKEN_DECODE_FAILED);
+            if (decoded.accessKey !== this.accessKey) throw new Error(ERRORS.ORDER_TOKEN_DECODE_WRONG_ACCESS_KEY);
+            return decoded;
+        } catch (error) {
+            this.handleAxiosError(error);
         }
     }
 
