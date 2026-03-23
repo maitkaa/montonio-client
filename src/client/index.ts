@@ -1,6 +1,8 @@
+import jwt from "jsonwebtoken";
 import qs from "qs";
 import { v4 as uuidv4 } from "uuid";
 
+import { MontonioBaseClient } from "../base";
 import { Currency, PaymentMethod, PaymentStatus, PayoutOutputType } from "../enums";
 import { ERRORS } from "../errors";
 import {
@@ -14,8 +16,6 @@ import {
     QueryParams,
     RefundResponse, StoreBalanceResponse
 } from "../types";
-import { MontonioBaseClient } from "../base";
-import jwt from "jsonwebtoken";
 
 
 /**

@@ -1,3 +1,4 @@
+import { MontonioBaseClient } from "../base";
 import { PickupPointSubtype } from "../enums";
 import { ERRORS } from "../errors";
 import {
@@ -11,7 +12,6 @@ import {
     ShippingMethod,
     ShippingMethodsResponse,
 } from "../types";
-import { MontonioBaseClient } from "../base";
 
 export interface MontonioShippingClientOptions {
     accessKey: string;
