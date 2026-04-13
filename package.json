@@ -1,6 +1,6 @@
 {
   "name": "@almightytech/montonio-client",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": "Mait Kaasik",
   "repository": "https://github.com/maitkaa/montonio-client",
   "description": "Unofficial Montonio API client",
@@ -49,7 +49,7 @@
     "typescript": "^5.6.2"
   },
   "dependencies": {
-    "axios": "^1.13.6",
+    "axios": "^1.15.0",
     "jsonwebtoken": "^9.0.3",
     "qs": "^6.13.0",
     "uuid": "^13.0.0"
