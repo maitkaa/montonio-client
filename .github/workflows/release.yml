@@ -31,7 +31,7 @@ jobs:
                     output-file: "false"
                     version-file: './package.json,./package-lock.json'
             -   name: 🎉 Create Release
-                uses: softprops/action-gh-release@v2.6.1
+                uses: softprops/action-gh-release@v3.0.0
                 if: ${{ steps.changelog.outputs.skipped == 'false' }}
                 env:
                     GITHUB_TOKEN: ${{ secrets.PA_TOKEN }}
