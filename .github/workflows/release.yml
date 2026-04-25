@@ -24,7 +24,7 @@ jobs:
             -   name: 🏗️ Build Package
                 run: npm run build
             -   name: 📜 Generate Changelog
-                uses: TriPSs/conventional-changelog-action@v6.3.0
+                uses: TriPSs/conventional-changelog-action@v6.3.1
                 id: changelog
                 with:
                     github-token: ${{ secrets.PA_TOKEN }}
